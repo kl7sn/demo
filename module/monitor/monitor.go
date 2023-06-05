@@ -1,9 +1,9 @@
 package monitor
 
 import (
+	"fmt"
 	"runtime"
-
-	"github.com/shirou/gopsutil/v3/mem"
+	"strconv"
 
 	"github.com/kl7sn/apian/pkg/dto"
 )
@@ -17,10 +17,6 @@ func ReadMemStats() (uint64, float64) {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 	// fmt.Printf("TotalAlloc = %v MiB", m.TotalAlloc/1024/1024)
-
-	v, _ := mem.VirtualMemory()
-	// fmt.Printf("Total: %v, Free:%v, UsedPercent:%f%%\n", v.Total, v.Free, v.UsedPercent)
-	// fmt.Printf("Total: %v MiB, Free:%v MiB, UsedPercent:%f%%\n", v.Total/1024/1024, v.Free/1024/1024, v.UsedPercent)
-
-	return m.TotalAlloc / 1024 / 1024, v.UsedPercent
+	usedPercent, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", float64(m.TotalAlloc)/float64(m.Sys)), 64)
+	return m.TotalAlloc / 1024 / 1024, usedPercent
 }
