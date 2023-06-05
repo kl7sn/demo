@@ -43,7 +43,7 @@ func (a *Apian) EnableMem() *Apian {
 }
 
 func (a *Apian) Start() error {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Millisecond * 10)
 	go func() {
 		for {
 			select {
@@ -64,7 +64,7 @@ func (a *Apian) calculateData() {
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
 
-	elog.Info("calculate", elog.Int("avg_MB", int(a.memAvg)), elog.Int("current_MB", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)))
+	elog.Info("calculate", elog.Int("avgMiB", int(a.memAvg)), elog.Int("currentMiB", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)))
 
 	if uint64(usedPercent) > a.opts.memOpts.TriggerPercent &&
 		uint64(diff) > a.opts.memOpts.TriggerDiff &&
@@ -72,7 +72,6 @@ func (a *Apian) calculateData() {
 		a.pprof()
 	}
 	a.memAvg = (a.memAvg + current) / 2
-	return
 }
 
 func (a *Apian) pprof() {
@@ -81,7 +80,5 @@ func (a *Apian) pprof() {
 		return
 	}
 	a.memCoolingTime = time.Now().Add(a.opts.memOpts.CoolingTime)
-	elog.Info("generate pprof files")
-	elog.Info("upload to oss")
 	webhook.Webhook(a.Forwarder.WebHook)
 }
