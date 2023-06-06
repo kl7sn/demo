@@ -43,7 +43,7 @@ func (a *Apian) EnableMem() *Apian {
 }
 
 func (a *Apian) Start() error {
-	ticker := time.NewTicker(time.Millisecond * 10)
+	ticker := time.NewTicker(time.Second)
 	go func() {
 		for {
 			select {
