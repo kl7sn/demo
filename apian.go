@@ -73,12 +73,9 @@ func (a *Apian) calculateData() {
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
 
-	elog.Info("calculate", elog.Int("avgMiB", int(a.memAvg)), elog.Int("currentMiB", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)))
+	elog.Info("cal", elog.Int("avg", int(a.memAvg)), elog.Int("size", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)), elog.Any("memOpts", a.opts.memOpts))
 
-	elog.Info("opts", elog.Any("mem", a.opts.memOpts))
-
-	if uint64(usedPercent) >= a.opts.memOpts.TriggerPercent &&
-		uint64(diff) >= a.opts.memOpts.TriggerDiff {
+	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
 		a.pprof()
 	}
 	a.memAvg = (a.memAvg + current) / 2
@@ -86,7 +83,7 @@ func (a *Apian) calculateData() {
 
 func (a *Apian) pprof() {
 	if a.memCoolingTime.After(time.Now()) {
-		elog.Info("cooling time")
+		elog.Info("coolingTime")
 		return
 	}
 	a.memCoolingTime = time.Now().Add(a.opts.memOpts.CoolingTime)
