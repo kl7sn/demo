@@ -36,6 +36,15 @@ func New(opts ...Option) (*Apian, error) {
 	return apian, nil
 }
 
+func (a *Apian) Apply(opts ...Option) error {
+	for _, o := range opts {
+		if err := o.apply(a.opts); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // EnableMem enables the mem dump.
 func (a *Apian) EnableMem() *Apian {
 	a.opts.memOpts.Enable = true
@@ -65,6 +74,8 @@ func (a *Apian) calculateData() {
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
 
 	elog.Info("calculate", elog.Int("avgMiB", int(a.memAvg)), elog.Int("currentMiB", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)))
+
+	elog.Info("opts", elog.Any("mem", a.opts.memOpts))
 
 	if uint64(usedPercent) >= a.opts.memOpts.TriggerPercent &&
 		uint64(diff) >= a.opts.memOpts.TriggerDiff {

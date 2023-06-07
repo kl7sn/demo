@@ -10,15 +10,20 @@ import (
 
 func main() {
 	a, _ := apian.New(
-		apian.WithMemOpts(128, 0, 10, time.Minute),
+		apian.WithMemOpts(0, 0, 0, 0),
 	)
-	a.EnableMem().Start()
+	_ = a.EnableMem().Start()
 	go func() {
 		for i := 0; i < 100; i++ {
 			// memoryLeaking()
 			time.Sleep(time.Second)
 		}
 	}()
+
+	time.Sleep(time.Second * 10)
+	// reload the config
+	_ = a.Apply(apian.WithMemOpts(1024, 10, 20, time.Hour))
+
 	time.Sleep(time.Hour)
 }
 

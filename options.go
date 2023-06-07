@@ -54,6 +54,15 @@ func newCubeOpts(triggerValue, triggerPercent, triggerDiff uint64, coolingTime t
 }
 
 func (cube *cubeOption) Set(value, percent, diff uint64, coolingTime time.Duration) {
+	if coolingTime == 0 {
+		coolingTime = defaultCoolingTime
+	}
+	if value == 0 {
+		value = defaultMemTriggerValue
+	}
+	if diff == 0 {
+		diff = defaultMemTriggerDiff
+	}
 	cube.TriggerValue = value
 	cube.TriggerPercent = percent
 	cube.TriggerDiff = diff
