@@ -1,14 +1,14 @@
 package webhook
 
 import (
-	resty "github.com/go-resty/resty/v2"
+	"github.com/go-resty/resty/v2"
 	"github.com/gotomicro/ego/core/elog"
 
 	"github.com/kl7sn/apian/pkg/dto"
 	"github.com/kl7sn/apian/pkg/utils"
 )
 
-func Webhook(fw dto.Webhook) {
+func Webhook(fw dto.Webhook, attach dto.AttachInfo) {
 	client := resty.New()
 	r := client.R().SetHeader("Content-Type", "application/json")
 	for k, v := range fw.Headers {
@@ -21,8 +21,8 @@ func Webhook(fw dto.Webhook) {
 			return
 		}
 		fw.Body["addr"] = ip + ":9003"
-		elog.Info("apian", elog.String("msg", "forward success"), elog.String("ip", ip), elog.Any("body", fw.Body))
+		elog.Info("apian", elog.Any("size", attach.CurrentAbs), elog.Any("attach", attach), elog.String("ip", ip), elog.Any("body", fw.Body))
 	}
 	r.SetBody(fw.Body)
-	r.Post(fw.Url)
+	_, _ = r.Post(fw.Url)
 }

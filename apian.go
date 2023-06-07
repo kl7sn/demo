@@ -76,16 +76,22 @@ func (a *Apian) calculateData() {
 	elog.Info("cal", elog.Int("avg", int(a.memAvg)), elog.Int("size", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)), elog.Any("memOpts", a.opts.memOpts))
 
 	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
-		a.pprof()
+		a.pprof(dto.AttachInfo{
+			CurrentAbs:        current,
+			CurrentDiff:       int(diff),
+			OptAbs:            a.opts.memOpts.TriggerValue,
+			OptDiff:           a.opts.memOpts.TriggerDiff,
+			OptCoolingTimeSec: int(a.opts.memOpts.CoolingTime.Seconds()),
+		})
 	}
 	a.memAvg = (a.memAvg + current) / 2
 }
 
-func (a *Apian) pprof() {
+func (a *Apian) pprof(attach dto.AttachInfo) {
 	if a.memCoolingTime.After(time.Now()) {
 		elog.Info("coolingTime")
 		return
 	}
 	a.memCoolingTime = time.Now().Add(a.opts.memOpts.CoolingTime)
-	webhook.Webhook(a.Forwarder.WebHook)
+	webhook.Webhook(a.Forwarder.WebHook, attach)
 }

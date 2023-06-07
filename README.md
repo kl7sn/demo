@@ -10,7 +10,7 @@ The purpose of this service is to help users automatically locate the OOM proble
 
 # TODO
 
-## v0.0.4
+## v0.1.0
 - [x] Support trigger indicator hot loading
   - use `Apply` to reload the trigger indicator
 - [x] Provide default trigger indicator
