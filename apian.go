@@ -67,8 +67,7 @@ func (a *Apian) calculateData() {
 	elog.Info("calculate", elog.Int("avgMiB", int(a.memAvg)), elog.Int("currentMiB", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)))
 
 	if uint64(usedPercent) >= a.opts.memOpts.TriggerPercent &&
-		uint64(diff) >= a.opts.memOpts.TriggerDiff &&
-		current >= a.opts.memOpts.TriggerValue {
+		uint64(diff) >= a.opts.memOpts.TriggerDiff {
 		a.pprof()
 	}
 	a.memAvg = (a.memAvg + current) / 2
