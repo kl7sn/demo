@@ -73,7 +73,7 @@ func (a *Apian) calculateData() {
 	}
 	diff := (float64(current) - float64(a.memAvg)) * 100 / float64(a.memAvg)
 
-	elog.Info("cal", elog.Int("avg", int(a.memAvg)), elog.Int("size", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)), elog.Any("memOpts", a.opts.memOpts))
+	elog.Debug("cal", elog.Int("avg", int(a.memAvg)), elog.Int("size", int(current)), elog.Int("diffPercent", int(diff)), elog.Int("usedPercent", int(usedPercent)), elog.Any("memOpts", a.opts.memOpts))
 
 	if current >= a.opts.memOpts.TriggerValue && uint64(diff) >= a.opts.memOpts.TriggerDiff {
 		a.pprof(dto.AttachInfo{

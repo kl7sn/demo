@@ -17,12 +17,16 @@ func Webhook(fw dto.Webhook, attach dto.AttachInfo) {
 	if _, ok := fw.Body["mode"]; ok {
 		ip, err := utils.GetOutBoundIP()
 		if err != nil {
-			elog.Error("forward", elog.FieldErr(err), elog.String("msg", "get outbound ip error"))
+			elog.Error("forward", elog.FieldEvent("GetOutBoundIP"), elog.FieldErr(err), elog.String("msg", "get outbound ip error"))
 			return
 		}
 		fw.Body["addr"] = ip + ":9003"
 		elog.Info("apian", elog.Any("size", attach.CurrentAbs), elog.Any("attach", attach), elog.String("ip", ip), elog.Any("body", fw.Body))
 	}
 	r.SetBody(fw.Body)
-	_, _ = r.Post(fw.Url)
+	resp, err := r.Post(fw.Url)
+	if err != nil {
+		elog.Error("forward", elog.FieldEvent("post"), elog.FieldErr(err), elog.Any("fw", fw), elog.String("resp", resp.String()))
+		return
+	}
 }
