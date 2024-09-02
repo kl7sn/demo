@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "github.com/kl7sn/demo/grpc/pb";
+
+package demo;
+
+// Hello 服务，包含了4种类型API
+service Hello {
+  // UnaryAPI
+  rpc Unary(Request) returns (Response) {}
+  // SServerStreaming
+  rpc ServerStreaming(Request) returns (stream Response) {}
+  // ClientStreamingE
+  rpc ClientStreaming(stream Request) returns (Response) {}
+  // BidirectionalStreaming
+  rpc BidirectionalStreaming(stream Request) returns (stream Response) {}
+}
+
+message Request {
+  string message = 1;
+}
+
+message Response {
+  string message = 1;
+}

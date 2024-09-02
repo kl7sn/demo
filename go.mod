@@ -1,4 +1,4 @@
-module github.com/kl7sn/apian
+module github.com/kl7sn/demo
 
 go 1.19
 
